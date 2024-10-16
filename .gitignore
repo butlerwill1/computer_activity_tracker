@@ -1,6 +1,7 @@
-__pycache__
+__pycache__/
 dist/
 build/
 comp_act_venv/
 .terraform/
 main.spec
+.DS_Store
