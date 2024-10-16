@@ -3,3 +3,4 @@ dist/
 build/
 comp_act_venv/
 .terraform/
+main.spec
