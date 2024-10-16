@@ -46,27 +46,27 @@ Class: ActivityTracker
 Constructor
 ActivityTracker(kinesis_stream: str, idle_threshold: int=5)
 
-Parameters:
+### Parameters:
 
-kinesis_stream (str): The name of the Kinesis stream where events will be sent.
-idle_threshold (int): Time in seconds before detecting idle time (default: 5 seconds).
+- **`kinesis_stream (str)`**: The name of the Kinesis stream where events will be sent.
+- **`idle_threshold (int)`**: Time in seconds before detecting idle time (default: 5 seconds).
 
-Methods
-create_event(event_type: str, data: Dict[str, Any]) -> Dict[str, Any]: Creates an event dictionary with a timestamp and activity type.
+### Methods
+- **`create_event(event_type: str, data: Dict[str, Any]) -> Dict[str, Any]`**: Creates an event dictionary with a timestamp and activity type.
+  
+- **`on_mouse_move(x: float, y: float) -> None`**: Tracks mouse movements and detects idle time.
 
-on_mouse_move(x: float, y: float) -> None: Tracks mouse movements and detects idle time.
+- **`on_mouse_click(x: float, y: float, button: mouse.Button, pressed: bool) -> None`**: Tracks mouse clicks and sends click events.
 
-on_mouse_click(x: float, y: float, button: mouse.Button, pressed: bool) -> None: Tracks mouse clicks and sends click events.
+- **`on_key_press(key: keyboard.Key) -> None`**: Tracks keyboard inputs, word completions, and handles backspaces.
 
-on_key_press(key: keyboard.Key) -> None: Tracks keyboard inputs, word completions, and handles backspaces.
+- **`get_active_app_and_window() -> Tuple[str, str]`**: Uses AppleScript to get the name of the currently active application and window.
 
-get_active_app_and_window() -> Tuple[str, str]: Uses AppleScript to get the name of the currently active application and window.
+- **`track_application() -> None`**: Continuously monitors for changes in the active application and window, sending events when changes are detected.
 
-track_application() -> None: Continuously monitors for changes in the active application and window, sending events when changes are detected.
+- **`send_event(event: Dict[str, Any]) -> None`**: Sends an event to the AWS Kinesis stream.
 
-send_event(event: Dict[str, Any]) -> None: Sends an event to the AWS Kinesis stream.
-
-start_listeners() -> None: Starts listeners for mouse and keyboard events, and starts the application tracker in a separate thread.
+- **`start_listeners() -> None`**: Starts listeners for mouse and keyboard events, and starts the application tracker in a separate thread.
 
 Example
 Here is an example of how you can use the ActivityTracker:
@@ -100,10 +100,10 @@ IAM Role/Policy: The AWS role or user must have the appropriate permissions to w
 }
 ```
 
-Future Enhancements
-Add support for more granular event tracking (e.g., tracking idle time for the keyboard as well).
-Implement an analytics module to process the data sent to Kinesis for insights on productivity.
-Extend support for other operating systems beyond macOS (currently using AppleScript for app tracking).
+### Future Enhancements
+- Add support for more granular event tracking (e.g., tracking idle time for the keyboard as well).
+- Implement an analytics module to process the data sent to Kinesis for insights on productivity.
+- Extend support for other operating systems beyond macOS (currently using AppleScript for app tracking).
 
 
 
