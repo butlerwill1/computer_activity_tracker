@@ -68,45 +68,42 @@ ActivityTracker(kinesis_stream: str, idle_threshold: int=5)
 
 - **`start_listeners() -> None`**: Starts listeners for mouse and keyboard events, and starts the application tracker in a separate thread.
 
-Example
-Here is an example of how you can use the ActivityTracker:
 
-```python
-from activity_tracker import ActivityTracker
+# Terraform Configuration for AWS Kinesis and S3
 
-# Initialize the activity tracker with your Kinesis stream name
-tracker = ActivityTracker(kinesis_stream="my_kinesis_stream")
+This Terraform configuration defines and provisions infrastructure for tracking computer activity, including mouse movements, keystrokes, and application changes, by using **AWS Kinesis**, **Kinesis Firehose**, and **Amazon S3**.
 
-# Start the activity tracking listeners
-tracker.start_listeners()
+## Summary
+
+### 1. AWS Kinesis Stream
+- **Kinesis Stream (`aws_kinesis_stream`)**: A Kinesis stream named `computer_activity_stream_new` is created to capture activity data. It is set up with 1 shard to handle data ingestion.
+
+### 2. AWS S3 Bucket
+- **S3 Bucket (`aws_s3_bucket`)**: An S3 bucket named `computer-activity-new` is created to store the activity data delivered from Kinesis Firehose.
+
+### 3. AWS IAM Role and Policy for Firehose
+- **IAM Role (`aws_iam_role`)**: A service role for Kinesis Firehose is created to allow Firehose to assume this role and interact with the S3 bucket.
+- **IAM Policy (`aws_iam_policy`)**: The policy grants the Firehose role permissions to `PutObject`, `GetObject`, and `ListBucket` in the S3 bucket. The policy is attached to the Firehose role.
+
+### 4. AWS Kinesis Firehose Delivery Stream
+- **Kinesis Firehose Delivery Stream (`aws_kinesis_firehose_delivery_stream`)**: A delivery stream named `kinesis_to_firehose_new` is set up to process and deliver data from the Kinesis stream to the S3 bucket.
+  - **Buffering**: Data is buffered before delivery with a size of 64 MB or every 300 seconds.
+  - **Dynamic Partitioning**: Dynamic partitioning is enabled to store data in an organized structure in S3 based on activity type and timestamps (year, month, day, hour).
+  - **Error Handling**: If any errors occur during data processing, error data is saved under a specific prefix in S3.
+  - **Metadata Extraction**: The configuration includes metadata extraction using JQ 1.6 to extract the `activity_type` from incoming JSON records for dynamic partitioning.
+
+## Deployment
+To deploy this configuration, ensure Terraform is installed and configured with AWS credentials. Then run:
+
+```bash
+terraform init
+terraform apply
 ```
 
-AWS Kinesis Setup
-Create Kinesis Stream: Ensure your AWS Kinesis stream is set up and ready to receive data.
-IAM Role/Policy: The AWS role or user must have the appropriate permissions to write to the Kinesis stream. Example policy:
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "kinesis:PutRecord"
-            ],
-            "Resource": "arn:aws:kinesis:region:account-id:stream/your-kinesis-stream"
-        }
-    ]
-}
-```
+This will provision all the necessary resources in AWS.
 
 ### Future Enhancements
 - Add support for more granular event tracking (e.g., tracking idle time for the keyboard as well).
 - Implement an analytics module to process the data sent to Kinesis for insights on productivity.
 - Extend support for other operating systems beyond macOS (currently using AppleScript for app tracking).
 
-
-
-### Notes:
-- This README provides an overview of the project, how to install dependencies, usage instructions, and AWS setup.
-- The class constructor, methods, and an example usage are documented in a user-friendly way.
