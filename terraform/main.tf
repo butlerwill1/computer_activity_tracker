@@ -2,8 +2,17 @@ provider "aws" {
     region = "eu-west-2"
 }
 
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "~> 5.70.0"
+    }
+  }
+}
+
 resource "aws_kinesis_stream" "t_computer_activity_stream" {
-    name            = "computer_activity_stream_new"
+    name            = "computer_activity_stream"
     shard_count     = 1
 }
 
@@ -54,7 +63,7 @@ resource "aws_iam_policy_attachment" "t_firehose_policy_attachment" {
 }
 
 resource "aws_kinesis_firehose_delivery_stream" "t_kinesis_to_firehose" {
-    name          =  "kinesis_to_firehose_new"
+    name          =  "kinesis_to_firehose"
     destination   =  "extended_s3"
 
     extended_s3_configuration {
